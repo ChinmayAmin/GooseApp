@@ -1,7 +1,65 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+    android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.GooseCorp.goose.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame">
+
+    <Button
+        android:id="@+id/goToMap"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignBaseline="@+id/search"
+        android:layout_alignBottom="@+id/search"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="35dp"
+        android:icon="@drawable/mapicon" />
+
+    <Button
+        android:id="@+id/search"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="45dp"
+        android:layout_marginRight="20dp"
+        android:layout_toLeftOf="@+id/goToMap"
+        android:layout_marginBottom="35dp"
+        android:icon="@drawable/search" />
+    
+    <Button
+        android:id="@+id/about"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignBaseline="@+id/savedStops"
+        android:layout_alignBottom="@+id/savedStops"
+        android:layout_toRightOf="@+id/search"
+        android:icon="@drawable/aboutus" />
+
+    <Button
+        android:id="@+id/savedStops"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignLeft="@+id/search"
+        android:layout_below="@+id/search"
+        android:layout_marginTop="43dp"
+        android:icon="@drawable/bookmarks" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/about"
+        android:layout_marginBottom="20dp"
+        android:text="Goose Inc."
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+    
+</RelativeLayout>
