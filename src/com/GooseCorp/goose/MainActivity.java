@@ -74,8 +74,8 @@ public class MainActivity extends Activity {
 					@Override
 					public void onClick(View arg0) {
 						// TODO Auto-generated method stub
-//						Intent intent = new Intent(MainActivity.this,SearchActivity.class);
-//						startActivity(intent);
+						Intent intent = new Intent(MainActivity.this,MapActivity.class);
+						startActivity(intent);
 					}
 				});
 	}
