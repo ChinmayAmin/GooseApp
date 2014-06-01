@@ -7,59 +7,102 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends Activity implements LocationListener {
+public class MapActivity extends FragmentActivity implements ConnectionCallbacks, android.location.LocationListener{
 	
 	GoogleMap map;
-	private LocationManager locationManager;
-	private String provider;
+	LocationClient locClient;
+	LocationManager locManager;
 	
-    @Override
+    @Override	
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         
-        //Get the map
+        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        
+        //Get the mapmLocationClient
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        map.setMyLocationEnabled(true);
         
-        //Check if the user is using wifi gps enabled
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        
-        //Check if gps is enabled
-        boolean enabledGPS = service
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-        
-        //Check if wifi enabled
-        boolean enabledWiFi = service
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        
-        //If gps is not on then error message
-        if (!enabledGPS) {
-            Toast.makeText(this, "GPS signal not found", Toast.LENGTH_LONG).show();
-        }
-        else if(!enabledWiFi){
-        	Toast.makeText(this, "GPS signal not found", Toast.LENGTH_LONG).show();
-        }
-       
+        map.setOnMarkerClickListener(myMarkerClickListener);
+
     }
+    
+    private GoogleMap.OnMarkerClickListener myMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+		
+		@Override
+		public boolean onMarkerClick(Marker arg0) {
+			// TODO Auto-generated method stub
+			
+			return false;
+		}
+	};
+	@Override
+	public void onConnected(Bundle arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
-	public void onLocationChanged(Location arg0) {
+	public void onDisconnected() {
 		// TODO Auto-generated method stub
-		Location loc = arg0;
-        map.addMarker(new MarkerOptions()
-        .icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop))
-        .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
-        .position(new LatLng(45.4000,75.6667)));
+		
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		  map.clear();
+
+		   MarkerOptions mp = new MarkerOptions();
+
+		   mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
+
+		   mp.title("Bus stop #");
+		   
+		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
+		   map.addMarker(mp);
+
+		   map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+		    new LatLng(location.getLatitude(), location.getLongitude()), 16));
+	}
+
+	@Override
+	public void onProviderDisabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+		// TODO Auto-generated method stub
+		
 	}
 }
