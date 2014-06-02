@@ -48,6 +48,10 @@
             android:name="com.GooseCorp.goose.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
+        <activity
+            android:name="com.GooseCorp.goose.SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
     </application>
 
 </manifest>

@@ -56,10 +56,8 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         map.setOnMarkerClickListener(myMarkerClickListener);
         
         //Get all the stops from and check if not null
-        if(getAllStops() != null)
-        {
-//        	busStopInformation = getAllStops();
-        }
+        busStopInformation = new BusStopInformation[5500];
+        getAllStops();
         
 //        System.out.println(busStopInformation[0].stop_id);
     }
@@ -77,9 +75,8 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
     	private String parent_station;
     }
     
-    public BusStopInformation[] getAllStops()
+    public void getAllStops()
     {
-    	BusStopInformation[] busStops = new BusStopInformation[5500];
 		
     	BufferedReader br = null;
     	String line = "";
@@ -91,25 +88,14 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 			while((line = br.readLine()) != null)
 			{
 				String[] stopInfo = line.split(delim);
-				busStops[count] = new BusStopInformation();
-				busStops[count].stop_id = stopInfo[0];
-				busStops[count].stop_code = stopInfo[1];
-				busStops[count].stop_name = stopInfo[2];
-				busStops[count].stop_desc = stopInfo[3];
-				busStops[count].stop_loc = new LatLng(Double.parseDouble(stopInfo[4]),Double.parseDouble(stopInfo[5]));
-				busStops[count].zone_id = stopInfo[6];
-				busStops[count].stop_url = stopInfo[7];
-				busStops[count].location_type = stopInfo[8];
-				busStops[count].parent_station = stopInfo[9];
-				
+				busStopInformation[count] = new BusStopInformation();
+				busStopInformation[count].stop_id = stopInfo[0];				
 				count++;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-    		return busStops;   	
+		}   	
     }
     
     private GoogleMap.OnMarkerClickListener myMarkerClickListener = new GoogleMap.OnMarkerClickListener() {

@@ -247,10 +247,12 @@ containing a value of this type.
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int activity_map=0x7f030001;
+        public static final int activity_search=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;
         public static final int map=0x7f0a0001;
+        public static final int search=0x7f0a0002;
     }
     public static final class string {
         public static final int action_settings=0x7f06001d;
@@ -355,6 +357,7 @@ containing a value of this type.
         public static final int location_client_powered_by_google=0x7f06001a;
         public static final int title_activity_map=0x7f06001e;
         public static final int title_activity_random_test=0x7f06001f;
+        public static final int title_activity_search=0x7f060020;
     }
     public static final class style {
         /** 
