@@ -251,7 +251,6 @@ containing a value of this type.
     public static final class menu {
         public static final int main=0x7f0a0000;
         public static final int map=0x7f0a0001;
-        public static final int random_test=0x7f0a0002;
     }
     public static final class string {
         public static final int action_settings=0x7f06001d;
