@@ -11,7 +11,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -44,8 +46,19 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         
         //Setup the location client
         locClient = new LocationClient(this,this,this);
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         
-        //Connect to GooglePlayServices
+        boolean enabledGPS = service
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean enabledWiFi = service
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (!enabledGPS) {
+            Toast.makeText(this, "GPS signal not found", Toast.LENGTH_LONG).show();
+        }
+        else if(!enabledWiFi){
+        	Toast.makeText(this, "Network signal not found", Toast.LENGTH_LONG).show();
+        }
+        
         locClient.connect();
         
         //Get the Map and enable location detection
@@ -59,16 +72,30 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         busStopInformation = new BusStopInformation[5500];
         getAllStops();
         
+        //Add the markers for the location 
+        for(int i = 0;i < busStopInformation.length; i++)
+        {
+// 		   MarkerOptions mp = new MarkerOptions();
+//
+// 		   Log.d("1", busStopInformation[i].stop_lat);
+//// 		   mp.position(new LatLng(Double.parseDouble(busStopInformation[i].stop_lat), Double.parseDouble(busStopInformation[i].stop_long)));
+// 		   mp.position(new LatLng(10,10));
+// 		   mp.title(busStopInformation[i].stop_id);
+// 		   
+// 		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
+// 		   map.addMarker(mp);
+        }
 //        System.out.println(busStopInformation[0].stop_id);
     }
-    
+
     public class BusStopInformation
     {
     	private String stop_id;
     	private String stop_code;
     	private String stop_name;
     	private String stop_desc;
-    	private LatLng stop_loc;
+    	private String stop_lat;
+    	private String stop_long;
     	private String zone_id;
     	private String stop_url;
     	private String location_type;
@@ -89,7 +116,18 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 			{
 				String[] stopInfo = line.split(delim);
 				busStopInformation[count] = new BusStopInformation();
-				busStopInformation[count].stop_id = stopInfo[0];				
+				
+				if(count != 0){
+					busStopInformation[count].stop_id = stopInfo[0];
+					busStopInformation[count].stop_code = stopInfo[1];	
+					busStopInformation[count].stop_name = stopInfo[2];	
+					busStopInformation[count].stop_desc = stopInfo[3];	
+					busStopInformation[count].stop_lat = stopInfo[4];
+					busStopInformation[count].stop_long = stopInfo[5];
+					busStopInformation[count].zone_id = stopInfo[6];	
+					busStopInformation[count].stop_url = stopInfo[7];	
+					busStopInformation[count].location_type = stopInfo[8];	
+				}
 				count++;
 			}
 		} catch (IOException e) {
@@ -129,7 +167,7 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-		
+		Toast.makeText(this, "Connec to GPS", Toast.LENGTH_SHORT);
 	}
 
 	@Override
@@ -154,6 +192,6 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0) {
 		// TODO Auto-generated method stub
-		
+		Toast.makeText(this, "Connec to GPS", Toast.LENGTH_SHORT);
 	}
 }

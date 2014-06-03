@@ -52,6 +52,14 @@
             android:name="com.GooseCorp.goose.SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
+        <activity
+            android:name="com.GooseCorp.goose.BusStopActivity"
+            android:label="@string/title_activity_bus_stop" >
+        </activity>
+        <activity
+            android:name="com.GooseCorp.goose.BusNumberActivity"
+            android:label="@string/title_activity_bus_number" >
+        </activity>
     </application>
 
 </manifest>
