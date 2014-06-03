@@ -57,9 +57,10 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         }
         else if(!enabledWiFi){
         	Toast.makeText(this, "Network signal not found", Toast.LENGTH_LONG).show();
+        }else
+        {
+        	locClient.connect();
         }
-        
-        locClient.connect();
         
         //Get the Map and enable location detection
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -67,25 +68,7 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         
         //Add listener on marker so we can click on it
         map.setOnMarkerClickListener(myMarkerClickListener);
-        
-        //Get all the stops from and check if not null
-        busStopInformation = new BusStopInformation[5500];
-        getAllStops();
-        
-        //Add the markers for the location 
-        for(int i = 0;i < busStopInformation.length; i++)
-        {
-// 		   MarkerOptions mp = new MarkerOptions();
-//
-// 		   Log.d("1", busStopInformation[i].stop_lat);
-//// 		   mp.position(new LatLng(Double.parseDouble(busStopInformation[i].stop_lat), Double.parseDouble(busStopInformation[i].stop_long)));
-// 		   mp.position(new LatLng(10,10));
-// 		   mp.title(busStopInformation[i].stop_id);
-// 		   
-// 		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
-// 		   map.addMarker(mp);
-        }
-//        System.out.println(busStopInformation[0].stop_id);
+       
     }
 
     public class BusStopInformation
@@ -104,7 +87,6 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
     
     public void getAllStops()
     {
-		
     	BufferedReader br = null;
     	String line = "";
     	String delim = ",";
@@ -126,7 +108,8 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 					busStopInformation[count].stop_long = stopInfo[5];
 					busStopInformation[count].zone_id = stopInfo[6];	
 					busStopInformation[count].stop_url = stopInfo[7];	
-					busStopInformation[count].location_type = stopInfo[8];	
+					busStopInformation[count].location_type = stopInfo[8];
+					Log.d("1",stopInfo[4]);
 				}
 				count++;
 			}
@@ -149,25 +132,47 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 	public void onConnected(Bundle arg0) {
 		// TODO Auto-generated method stub
 		userLocation = locClient.getLastLocation();
-		   map.clear();
-
-		   MarkerOptions mp = new MarkerOptions();
-
-		   mp.position(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()));
-
-		   mp.title("Bus stop #");
-		   
-		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
-		   map.addMarker(mp);
-		  // Tools to help 
-		   map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-		    new LatLng(userLocation.getLatitude(), userLocation.getLongitude()), 16));
+		
+        //Get all the stops from and check if not null
+        busStopInformation = new BusStopInformation[5500];
+        getAllStops();
+        
+        //Set the markers
+        
+        //Add the markers for the location 
+        for(int i = 0;i < 20; i++)
+        {
+           map.clear();
+ 		   MarkerOptions mp = new MarkerOptions();
+ 		   
+ 		   if(busStopInformation[i].stop_lat != null && busStopInformation[i].stop_long != null){
+	 		   mp.position(new LatLng(Double.parseDouble(busStopInformation[i].stop_lat), Double.parseDouble(busStopInformation[i].stop_long)));
+	 		   mp.title(busStopInformation[i].stop_id);
+	 		   
+	 		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
+	 		   map.addMarker(mp);
+ 		   }
+        }
+        
+//	   map.clear();
+//
+//	   MarkerOptions mp = new MarkerOptions();
+//
+//	   mp.position(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()));
+//
+//	   mp.title("Bus stop #");
+//	   
+//	   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
+//	   map.addMarker(mp);
+//	  // Tools to help 
+	   map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+	    new LatLng(userLocation.getLatitude(), userLocation.getLongitude()), 16));
 	}
 
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "Connec to GPS", Toast.LENGTH_SHORT);
+		Toast.makeText(this, "Connect to GPS", Toast.LENGTH_SHORT);
 	}
 
 	@Override

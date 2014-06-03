@@ -58,10 +58,11 @@ public class SearchActivity extends Activity  {
 	                        
 	                    }
 	                });
-//		for(int i = 0; i < busStops.length - 1; i++)
-//		{
-//			Log.d("1",busStops[i]);
-//		}
+		for(int i = 0; i < busStops.length - 1; i++)
+		{
+			if(busStops[i] != null)
+			Log.d("1",busStops[i]);
+		}
 	}
 	
 	private void getBusStops()
