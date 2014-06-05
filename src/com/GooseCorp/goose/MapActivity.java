@@ -3,6 +3,7 @@ package com.GooseCorp.goose;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +40,7 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 	LocationClient locClient;
 	Location userLocation;
 	BusStopInformation[] busStopInformation;
+	LatLng[] stopLocations;
 	
     @Override	
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +62,20 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
         	Toast.makeText(this, "Network signal not found", Toast.LENGTH_LONG).show();
         }else
         {
+            //Get the Map and enable location detection
+            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            map.setMyLocationEnabled(true);
+            
+            //Add listener on marker so we can click on it
+            map.setOnMarkerClickListener(myMarkerClickListener);
         	locClient.connect();
+            
+            //Get all the stops
+            busStopInformation = new BusStopInformation[2606];
+            getAllStops();
+           
         }
-        
-        //Get the Map and enable location detection
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.setMyLocationEnabled(true);
-        
-        //Add listener on marker so we can click on it
-        map.setOnMarkerClickListener(myMarkerClickListener);
-       
+
     }
 
     public class BusStopInformation
@@ -91,6 +98,8 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
     	String line = "";
     	String delim = ",";
     	int count = 0;
+    	stopLocations = new LatLng[2606];
+    	busStopInformation = new BusStopInformation[2606];
     	
     	try {
 			br = new BufferedReader(new InputStreamReader(getAssets().open("stops.txt")));
@@ -98,6 +107,7 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 			{
 				String[] stopInfo = line.split(delim);
 				busStopInformation[count] = new BusStopInformation();
+				
 				
 				if(count != 0){
 					busStopInformation[count].stop_id = stopInfo[0];
@@ -109,6 +119,7 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 					busStopInformation[count].zone_id = stopInfo[6];	
 					busStopInformation[count].stop_url = stopInfo[7];	
 					busStopInformation[count].location_type = stopInfo[8];
+					stopLocations[count] = new LatLng(Double.parseDouble(stopInfo[4]),Double.parseDouble(stopInfo[5]));
 					Log.d("1",stopInfo[4]);
 				}
 				count++;
@@ -122,39 +133,38 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
     private GoogleMap.OnMarkerClickListener myMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
 		
 		@Override
-		public boolean onMarkerClick(Marker arg0) {
+		public boolean onMarkerClick(Marker marker) {
 			// TODO Auto-generated method stub
-			
+//			Intent intent = new Intent(MapActivity.this,BusStopTimingActivity.class);
+//			intent.putExtra("stop_id", marker.getTitle());
+//			startActivityForResult(intent,0);
 			return false;
 		}
 	};
+	
 	@Override
 	public void onConnected(Bundle arg0) {
 		// TODO Auto-generated method stub
 		userLocation = locClient.getLastLocation();
 		
-        //Get all the stops from and check if not null
-        busStopInformation = new BusStopInformation[5500];
+        busStopInformation = new BusStopInformation[2606];
         getAllStops();
-        
-        //Set the markers
-        
+    
+        map.clear();
+		MarkerOptions mp = new MarkerOptions();
+		
         //Add the markers for the location 
-        for(int i = 0;i < 20; i++)
+        for(int i = 0;i < stopLocations.length; i++)
         {
-           map.clear();
- 		   MarkerOptions mp = new MarkerOptions();
- 		   
- 		   if(busStopInformation[i].stop_lat != null && busStopInformation[i].stop_long != null){
-	 		   mp.position(new LatLng(Double.parseDouble(busStopInformation[i].stop_lat), Double.parseDouble(busStopInformation[i].stop_long)));
-	 		   mp.title(busStopInformation[i].stop_id);
-	 		   
+        	if(stopLocations[i] != null){
+        	   mp.position(stopLocations[i]);
 	 		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
+	 		   mp.title(busStopInformation[i].stop_id);
 	 		   map.addMarker(mp);
- 		   }
+        	}
         }
-        
-//	   map.clear();
+                
+        //	   map.clear();
 //
 //	   MarkerOptions mp = new MarkerOptions();
 //
@@ -179,19 +189,6 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
 		userLocation = location;
-//		  map.clear();
-//
-//		   MarkerOptions mp = new MarkerOptions();
-//
-//		   mp.position(new LatLng(location.getLatitude(), location.getLongitude()));
-//
-//		   mp.title("Bus stop #");
-//		   
-//		   mp.icon(BitmapDescriptorFactory.fromResource(R.drawable.busstop));
-//		   map.addMarker(mp);
-//		  // Tools to help 
-//		   map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-//		    new LatLng(location.getLatitude(), location.getLongitude()), 16));
 	}
 
 	@Override
@@ -199,4 +196,6 @@ public class MapActivity extends FragmentActivity implements ConnectionCallbacks
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "Connec to GPS", Toast.LENGTH_SHORT);
 	}
+			
+	
 }

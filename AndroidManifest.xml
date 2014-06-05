@@ -60,6 +60,10 @@
             android:name="com.GooseCorp.goose.BusNumberActivity"
             android:label="@string/title_activity_bus_number" >
         </activity>
+        <activity
+            android:name="com.GooseCorp.goose.BusStopTimingActivity"
+            android:label="@string/title_activity_bus_stop_timing" >
+        </activity>
     </application>
 
 </manifest>
